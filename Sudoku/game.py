@@ -3,18 +3,13 @@ from pygame.locals import *
 from main import *
 
 pygame.init()
-display_width = 603
-display_height = 700
-dif = display_width//9
-game_display = pygame.display.set_mode((display_width, display_height))
 pygame.display.set_caption("Sudoku")
+display_width, display_height = 603, 700
+game_display = pygame.display.set_mode((display_width, display_height))
 game_display.fill((194,194,214))
-font = pygame.font.Font('freesansbold.ttf', 32)
-font1 = pygame.font.Font('freesansbold.ttf', 16)
-currentX = 0
-currentY = 0
-flag = (0,0)
-
+dif = display_width//9
+font, font1 = pygame.font.Font('freesansbold.ttf', 32), pygame.font.Font('freesansbold.ttf', 16)
+currentX, currentY = 0, 0
 empty = [
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
@@ -37,7 +32,6 @@ reset = [
     [0,4,0,0,5,0,0,3,6],
     [7,0,3,0,1,8,0,0,0]
 ]
-
 board2 = [
     [0,0,0,2,6,0,7,0,1],
     [6,8,0,0,7,0,0,9,0],
@@ -60,12 +54,14 @@ valid = [
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0]
 ]
+
+#Initialize Array
 for x in range(len(board2)):
     for y in range(len(board2)):
         if(board2[x][y] != 0):
             valid[x][y] = 1
-#board = int[9][9]
 
+#Update for relevent use
 def event_handler():
     for event in pygame.event.get():
         if(event.type == QUIT or (
@@ -81,6 +77,8 @@ def event_handler():
 
 
 def drawSudoku(board):
+    boldness = 10;
+    #Read in board and fill-in spaces
     for x in range(9):
         for y in range(9):
             if(board[x][y] != 0):
@@ -89,13 +87,14 @@ def drawSudoku(board):
                 game_display.blit(text1, (x * dif + 15, y * dif + 15))
             pygame.draw.rect(game_display, (0, 0, 0), [dif * x , dif * y , dif, dif], 2)
 
+    #Read-In Text
     pygame.draw.line(game_display, (0, 0, 0), (0, display_width), (800,display_width), 2)
     text2 = font1.render("Press R to reset\t"
                          "Press D to automatically Solve\t"
                          "Press F if you finish\t", 1, (0,0,0))
     game_display.blit(text2, (20, display_width))
     #drawing bold lines
-    boldness = 10;
+    #improve legibility
     pygame.draw.line(game_display, (0, 0, 0), (0, 0), (0, display_width), boldness)
     pygame.draw.line(game_display, (0, 0, 0), (display_width//3, 0), (display_width//3, display_width), boldness)
     pygame.draw.line(game_display, (0, 0, 0), (2*display_width//3, 0), (2*display_width//3, display_width), boldness)
@@ -105,8 +104,7 @@ def drawSudoku(board):
     pygame.draw.line(game_display, (0, 0, 0), (0, 2*display_width//3), (display_width, 2*display_width//3), boldness)
     pygame.draw.line(game_display, (0, 0, 0), (0, display_width), (display_width, display_width), boldness)
 
-drawSudoku(board2)
-
+#Optimize for better widespread use
 def delete():
     pygame.draw.rect(game_display, (194,194,214), [currentX, currentY, dif, dif], 0)
     pygame.draw.rect(game_display, (51, 153, 255), [currentX, currentY, dif, dif], 2)
@@ -115,7 +113,6 @@ def delete():
 
 def solveSudoku(board):
     helperMethod(0, 0, board)
-
 def helperMethod(x, y, board):
     # print("x: " + str(x) + " y: " + str(y))
     currentX, currentY = x, y
@@ -146,7 +143,10 @@ def helperMethod(x, y, board):
     board2[x][y] = 0
     return False
 
+#START OF MAIN FUNCTION
+drawSudoku(board2)
 while True:
+#HOW MUCH OF THIS CAN WE POSSIBLY PLACE INTO AN EVENT_HANDLER
     pos = pygame.mouse.get_pos()
     if(pos[1] < display_width):
         squareX = (pos[0] // dif) * dif
