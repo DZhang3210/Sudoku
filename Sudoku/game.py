@@ -1,7 +1,6 @@
 import pygame
 from pygame.locals import *
 from main import *
-import time
 
 pygame.init()
 display_width = 603
