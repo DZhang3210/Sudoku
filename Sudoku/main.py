@@ -40,7 +40,6 @@ def showSudoku(board):
         print("")
 
 def positionCheck(pos, board):
-
     return (checkRow(pos, board)
            and checkColumn(pos, board)
            and checkSquare(pos, board))

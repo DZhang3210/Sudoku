@@ -73,8 +73,6 @@ def event_handler(currentX, currentY):
             ))):
                 pygame.quit()
                 quit()
-            if (event.type == KEYDOWN and event.key == K_f):
-                solveSudoku(board2)
             # Check for in case you need to insert number
             if (event.type == KEYDOWN):
                 val = 0
@@ -104,11 +102,14 @@ def event_handler(currentX, currentY):
                     val = 12
                 elif(event.key == K_d):
                     val = 13
+                elif(event.key == K_f):
+                    val = 14
                 checkX = currentX // dif
                 checkY = currentY // dif
                 if (valid[checkX][checkY] != 1):
                     if (val == 10):
-                        delete(currentX * dif, currentY * dif)
+
+                        delete(currentX, currentY, board2)
                     elif (val == 11):
                         game_display.fill((194, 194, 214))
                         drawSudoku(reset)
@@ -125,6 +126,14 @@ def event_handler(currentX, currentY):
                                 valid[x][y] = 0
                     elif(val == 13):
                         sudokuVerifier(board2)
+                    elif(val == 14):
+                        game_display.fill((194, 194, 214))
+                        drawSudoku(reset)
+                        for x in range(len(board2)):
+                            for y in range(len(board2)):
+                                if (valid[x][y] == 0):
+                                    board2[x][y] = 0
+                        solveSudoku(board2)
                     elif (board2[currentX // dif][currentY // dif] == 0 and val != 0):
                         board2[currentX // dif][currentY // dif] = val
                         if (positionCheck((checkX, checkY), board2)):
@@ -135,10 +144,9 @@ def event_handler(currentX, currentY):
                             board2[currentX // dif][currentY // dif] = 0
 
 def drawSudoku(board):
-    boldness = 10;
     #Read in board and fill-in spaces
-    for x in range(9):
-        for y in range(9):
+    for x in range(len(board)):
+        for y in range(len(board)):
             if(board[x][y] != 0):
                 pygame.draw.rect(game_display, (0, 155,155) , [dif * x , dif * y , dif, dif], 0)
                 text1 = font.render(str(board[x][y]), 1, (0, 0, 0))
@@ -155,14 +163,11 @@ def drawSudoku(board):
                          "Press F to automatically solve\t", 1, (0, 0, 0))
     game_display.blit(text2, (20, display_width + 32))
 
-    #drawing bold lines
-    #improve legibility
-
 #Optimize for better widespread use
-def delete(x, y):
+def delete(x, y, board):
     pygame.draw.rect(game_display, (194,194,214), [x, y, dif, dif], 0)
     pygame.draw.rect(game_display, (51, 153, 255), [x, y, dif, dif], 2)
-    board2[x // dif][y // dif] = 0
+    board[x // dif][y // dif] = 0
 
 def solveSudoku(board):
     helperMethod(0, 0, board)
@@ -187,16 +192,16 @@ def helperMethod(x, y, board):
             if (helperMethod(x + 1, y, board)):
                 return True
             # Add at Location
-            delete(x*dif, y*dif)
+            delete(x*dif, y*dif, board2)
 
-    delete(x*dif, y*dif)
+    delete(x*dif, y*dif, board2)
     return False
 
 def sudokuVerifier(board):
     for x in range(len(board2)):
         for y in range(len(board2)):
             pos = (x, y)
-            if(positionCheck(pos, board)):
+            if(board[x][y] != 0 and positionCheck(pos, board)):
                 pygame.time.delay(20)
                 pygame.display.update()
                 pygame.draw.rect(game_display, (198, 49,212) , [dif * x , dif * y , dif, dif], 2)
