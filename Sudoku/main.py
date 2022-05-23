@@ -38,20 +38,8 @@ def showSudoku(board):
             print(str(board[x][y]) + " ", end = "")
         print("")
 
-
-
-def sudokuVerifier(board):
-    for x in range(9):
-        for y in range(9):
-            pos = (x, y)
-            if(not positionCheck(pos, board)):
-                return False
-    return True
-
 def positionCheck(pos, board):
-    # print(checkRow(pos, board))
-    # print(checkColumn(pos, board))
-    # print(checkSquare(pos, board))
+
     return (checkRow(pos, board)
            and checkColumn(pos, board)
            and checkSquare(pos, board))

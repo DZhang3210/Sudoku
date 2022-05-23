@@ -9,7 +9,9 @@ game_display = pygame.display.set_mode((display_width, display_height))
 game_display.fill((194,194,214))
 dif = display_width//9
 font, font1 = pygame.font.Font('freesansbold.ttf', 32), pygame.font.Font('freesansbold.ttf', 16)
-currentX, currentY = 0, 0
+currentX, currentY = 0,0
+
+
 empty = [
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0],
@@ -62,19 +64,75 @@ for x in range(len(board2)):
             valid[x][y] = 1
 
 #Update for relevent use
-def event_handler():
-    for event in pygame.event.get():
-        if(event.type == QUIT or (
-            event.type == KEYDOWN and (
-            event.key == K_ESCAPE or
-            event.key == K_q
-        ))):
-            pygame.quit()
-            quit()
-        if ((event.type == KEYDOWN and event.key == K_d)):
-            pygame.quit()
-            quit()
-
+def event_handler(currentX, currentY):
+        for event in pygame.event.get():
+            if (event.type == QUIT or (
+                    event.type == KEYDOWN and (
+                    event.key == K_ESCAPE or
+                    event.key == K_q
+            ))):
+                pygame.quit()
+                quit()
+            if (event.type == KEYDOWN and event.key == K_f):
+                solveSudoku(board2)
+            # Check for in case you need to insert number
+            if (event.type == KEYDOWN):
+                val = 0
+                if (event.key == K_1):
+                    val = 1
+                elif (event.key == K_2):
+                    val = 2
+                elif (event.key == K_3):
+                    val = 3
+                elif (event.key == K_4):
+                    val = 4
+                elif (event.key == K_5):
+                    val = 5
+                elif (event.key == K_6):
+                    val = 6
+                elif (event.key == K_7):
+                    val = 7
+                elif (event.key == K_8):
+                    val = 8
+                elif (event.key == K_9):
+                    val = 9
+                elif (event.key == K_g):
+                    val = 10
+                elif (event.key == K_r):
+                    val = 11
+                elif (event.key == K_h):
+                    val = 12
+                elif(event.key == K_d):
+                    val = 13
+                checkX = currentX // dif
+                checkY = currentY // dif
+                if (valid[checkX][checkY] != 1):
+                    if (val == 10):
+                        delete(currentX * dif, currentY * dif)
+                    elif (val == 11):
+                        game_display.fill((194, 194, 214))
+                        drawSudoku(reset)
+                        for x in range(len(board2)):
+                            for y in range(len(board2)):
+                                if(valid[x][y] == 0):
+                                    board2[x][y] = 0
+                    elif (val == 12):
+                        game_display.fill((194, 194, 214))
+                        drawSudoku(empty)
+                        for x in range(len(board2)):
+                            for y in range(len(board2)):
+                                board2[x][y] = 0
+                                valid[x][y] = 0
+                    elif(val == 13):
+                        sudokuVerifier(board2)
+                    elif (board2[currentX // dif][currentY // dif] == 0 and val != 0):
+                        board2[currentX // dif][currentY // dif] = val
+                        if (positionCheck((checkX, checkY), board2)):
+                            text2 = font.render(str(val), 1, (0, 0, 0))
+                            game_display.blit(text2, (currentX + dif // 4, currentY + dif // 4))
+                        else:
+                            pygame.draw.rect(game_display, (255, 0, 0), [currentX, currentY, dif, dif], 2)
+                            board2[currentX // dif][currentY // dif] = 0
 
 def drawSudoku(board):
     boldness = 10;
@@ -90,26 +148,21 @@ def drawSudoku(board):
     #Read-In Text
     pygame.draw.line(game_display, (0, 0, 0), (0, display_width), (800,display_width), 2)
     text2 = font1.render("Press R to reset\t"
-                         "Press D to automatically Solve\t"
-                         "Press F if you finish\t", 1, (0,0,0))
+                         "Press G to delete \t"
+                         "Press H to blank out puzzle \t", 1, (0,0,0))
     game_display.blit(text2, (20, display_width))
+    text2 = font1.render("Press D to Verify if it has been solved\t"
+                         "Press F to automatically solve\t", 1, (0, 0, 0))
+    game_display.blit(text2, (20, display_width + 32))
+
     #drawing bold lines
     #improve legibility
-    pygame.draw.line(game_display, (0, 0, 0), (0, 0), (0, display_width), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (display_width//3, 0), (display_width//3, display_width), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (2*display_width//3, 0), (2*display_width//3, display_width), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (display_width, 0), (display_width, display_width), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (0, 0), (display_width, 0), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (0, display_width//3), (display_width, display_width//3), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (0, 2*display_width//3), (display_width, 2*display_width//3), boldness)
-    pygame.draw.line(game_display, (0, 0, 0), (0, display_width), (display_width, display_width), boldness)
 
 #Optimize for better widespread use
-def delete():
-    pygame.draw.rect(game_display, (194,194,214), [currentX, currentY, dif, dif], 0)
-    pygame.draw.rect(game_display, (51, 153, 255), [currentX, currentY, dif, dif], 2)
-    board2[currentX // dif][currentY // dif] = 0
-
+def delete(x, y):
+    pygame.draw.rect(game_display, (194,194,214), [x, y, dif, dif], 0)
+    pygame.draw.rect(game_display, (51, 153, 255), [x, y, dif, dif], 2)
+    board2[x // dif][y // dif] = 0
 
 def solveSudoku(board):
     helperMethod(0, 0, board)
@@ -134,85 +187,45 @@ def helperMethod(x, y, board):
             if (helperMethod(x + 1, y, board)):
                 return True
             # Add at Location
-            pygame.draw.rect(game_display, (194,194,214), [x*dif, y*dif, dif, dif], 0)
-            pygame.draw.rect(game_display, (255, 0, 0), [x*dif, y*dif, dif, dif], 2)
-            board2[x][y] = 0
+            delete(x*dif, y*dif)
 
-    pygame.draw.rect(game_display, (194,194,214), [x*dif, y*dif, dif, dif], 0)
-    pygame.draw.rect(game_display, (255, 0, 0), [x*dif, y*dif, dif, dif], 2)
-    board2[x][y] = 0
+    delete(x*dif, y*dif)
     return False
 
+def sudokuVerifier(board):
+    for x in range(len(board2)):
+        for y in range(len(board2)):
+            pos = (x, y)
+            if(positionCheck(pos, board)):
+                pygame.time.delay(20)
+                pygame.display.update()
+                pygame.draw.rect(game_display, (198, 49,212) , [dif * x , dif * y , dif, dif], 2)
+            else:
+                pygame.draw.rect(game_display, (255, 0, 0), [dif * x, dif * y, dif, dif], 2)
+                return
+    return True
+
+
+
+
+
+
+
+
+#<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #START OF MAIN FUNCTION
 drawSudoku(board2)
 while True:
-#HOW MUCH OF THIS CAN WE POSSIBLY PLACE INTO AN EVENT_HANDLER
+    #Constantly checking for mouse movement to indicate where it's highlighting over
     pos = pygame.mouse.get_pos()
-    if(pos[1] < display_width):
+    if (pos[1] < display_width):
         squareX = (pos[0] // dif) * dif
         squareY = (pos[1] // dif) * dif
         if (squareX != currentX or squareY != currentY):
             pygame.draw.rect(game_display, (0, 0, 0), [currentX, currentY, dif, dif], 2)
             pygame.draw.rect(game_display, (255, 255, 0), [squareX, squareY, dif, dif], 2)
             currentX, currentY = squareX, squareY
-        for event in pygame.event.get():
-
-        #Check if you need to quit program
-            if (event.type == QUIT or (
-                    event.type == KEYDOWN and (
-                    event.key == K_ESCAPE or
-                    event.key == K_q
-            ))):
-                pygame.quit()
-                quit()
-            if (event.type == KEYDOWN and event.key == K_f):
-                solveSudoku(board2)
-        #Check for in case you need to insert number
-            if(event.type == KEYDOWN):
-                val = 0
-                if(event.key == K_1):
-                    val = 1
-                elif (event.key == K_2):
-                    val = 2
-                elif (event.key == K_3):
-                    val = 3
-                elif (event.key == K_4):
-                    val = 4
-                elif (event.key == K_5):
-                    val = 5
-                elif (event.key == K_6):
-                    val = 6
-                elif (event.key == K_7):
-                    val = 7
-                elif (event.key == K_8):
-                    val = 8
-                elif (event.key == K_9):
-                    val = 9
-                elif(event.key == K_g):
-                    val = 10
-                elif(event.key == K_r):
-                    val = 11
-                elif (event.key == K_h):
-                    val = 12
-                checkX = currentX // dif
-                checkY = currentY // dif
-                if(valid[checkX][checkY] != 1):
-                    if (val == 10):
-                        delete()
-                    elif (val == 11):
-                        game_display.fill((194, 194, 214))
-                        drawSudoku(reset)
-                    elif (val == 12):
-                        game_display.fill((194, 194, 214))
-                        drawSudoku(empty)
-                    elif(val != 0):
-                        board2[currentX // dif][currentY // dif] = val
-                        if (positionCheck((checkX, checkY), board2)):
-                            text2 = font.render(str(val), 1, (0, 0, 0))
-                            game_display.blit(text2, (currentX + dif // 4, currentY + dif // 4))
-                        else:
-                            pygame.draw.rect(game_display, (255, 0, 0), [currentX, currentY, dif, dif], 2)
-                            board2[currentX // dif][currentY // dif] = 0
-    event_handler()
+    event_handler(currentX, currentY)
+#HOW MUCH OF THIS CAN WE POSSIBLY PLACE INTO AN EVENT_HANDLER
     pygame.display.update()
 
