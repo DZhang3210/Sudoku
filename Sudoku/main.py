@@ -32,6 +32,7 @@ board3 = [
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0]
 ]
+
 def showSudoku(board):
     for x in range(len(board)):
         for y in range(len(board)):
@@ -74,10 +75,4 @@ def checkSquare(position, board):
 
 def findSquare(position):
     return (int(position[0]/3), int(position[1]/3))
-# showSudoku(board2)
-# # print(sudokuVerifier(board2))
-# solveSudoku(board2)
-# #print (positionCheck((0,0), board1))
-# print("\n---------------------\n")
-# showSudoku(board2)
-# print(sudokuVerifier(board2))
+

@@ -225,7 +225,7 @@ while True:
             pygame.draw.rect(game_display, (0, 0, 0), [currentX, currentY, dif, dif], 2)
             pygame.draw.rect(game_display, (255, 255, 0), [squareX, squareY, dif, dif], 2)
             currentX, currentY = squareX, squareY
+
     event_handler(currentX, currentY)
-#HOW MUCH OF THIS CAN WE POSSIBLY PLACE INTO AN EVENT_HANDLER
     pygame.display.update()
 
