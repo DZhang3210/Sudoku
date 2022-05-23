@@ -34,7 +34,7 @@ reset = [
     [0,4,0,0,5,0,0,3,6],
     [7,0,3,0,1,8,0,0,0]
 ]
-board2 = [
+board = [
     [0,0,0,2,6,0,7,0,1],
     [6,8,0,0,7,0,0,9,0],
     [1,9,0,0,0,4,5,0,0],
@@ -56,11 +56,10 @@ valid = [
     [0,0,0,0,0,0,0,0,0],
     [0,0,0,0,0,0,0,0,0]
 ]
-
-#Initialize Array
-for x in range(len(board2)):
-    for y in range(len(board2)):
-        if(board2[x][y] != 0):
+#Initialize Valid Array
+for x in range(len(board)):
+    for y in range(len(board)):
+        if(board[x][y] != 0):
             valid[x][y] = 1
 
 #Update for relevent use
@@ -109,39 +108,39 @@ def event_handler(currentX, currentY):
                 if (valid[checkX][checkY] != 1):
                     if (val == 10):
 
-                        delete(currentX, currentY, board2)
+                        delete(currentX, currentY, board)
                     elif (val == 11):
                         game_display.fill((194, 194, 214))
                         drawSudoku(reset)
-                        for x in range(len(board2)):
-                            for y in range(len(board2)):
+                        for x in range(len(board)):
+                            for y in range(len(board)):
                                 if(valid[x][y] == 0):
-                                    board2[x][y] = 0
+                                    board[x][y] = 0
                     elif (val == 12):
                         game_display.fill((194, 194, 214))
                         drawSudoku(empty)
-                        for x in range(len(board2)):
-                            for y in range(len(board2)):
-                                board2[x][y] = 0
+                        for x in range(len(board)):
+                            for y in range(len(board)):
+                                board[x][y] = 0
                                 valid[x][y] = 0
                     elif(val == 13):
-                        sudokuVerifier(board2)
+                        sudokuVerifier(board)
                     elif(val == 14):
                         game_display.fill((194, 194, 214))
                         drawSudoku(reset)
-                        for x in range(len(board2)):
-                            for y in range(len(board2)):
+                        for x in range(len(board)):
+                            for y in range(len(board)):
                                 if (valid[x][y] == 0):
-                                    board2[x][y] = 0
-                        solveSudoku(board2)
-                    elif (board2[currentX // dif][currentY // dif] == 0 and val != 0):
-                        board2[currentX // dif][currentY // dif] = val
-                        if (positionCheck((checkX, checkY), board2)):
+                                    board[x][y] = 0
+                        solveSudoku(board)
+                    elif (board[currentX // dif][currentY // dif] == 0 and val != 0):
+                        board[currentX // dif][currentY // dif] = val
+                        if (positionCheck((checkX, checkY), board)):
                             text2 = font.render(str(val), 1, (0, 0, 0))
                             game_display.blit(text2, (currentX + dif // 4, currentY + dif // 4))
                         else:
                             pygame.draw.rect(game_display, (255, 0, 0), [currentX, currentY, dif, dif], 2)
-                            board2[currentX // dif][currentY // dif] = 0
+                            board[currentX // dif][currentY // dif] = 0
 
 def drawSudoku(board):
     #Read in board and fill-in spaces
@@ -162,12 +161,6 @@ def drawSudoku(board):
     text2 = font1.render("Press D to Verify if it has been solved\t"
                          "Press F to automatically solve\t", 1, (0, 0, 0))
     game_display.blit(text2, (20, display_width + 32))
-
-#Optimize for better widespread use
-def delete(x, y, board):
-    pygame.draw.rect(game_display, (194,194,214), [x, y, dif, dif], 0)
-    pygame.draw.rect(game_display, (51, 153, 255), [x, y, dif, dif], 2)
-    board[x // dif][y // dif] = 0
 
 def solveSudoku(board):
     helperMethod(0, 0, board)
@@ -192,14 +185,14 @@ def helperMethod(x, y, board):
             if (helperMethod(x + 1, y, board)):
                 return True
             # Add at Location
-            delete(x*dif, y*dif, board2)
+            delete(x*dif, y*dif, board)
 
-    delete(x*dif, y*dif, board2)
+    delete(x*dif, y*dif, board)
     return False
 
 def sudokuVerifier(board):
-    for x in range(len(board2)):
-        for y in range(len(board2)):
+    for x in range(len(board)):
+        for y in range(len(board)):
             pos = (x, y)
             if(board[x][y] != 0 and positionCheck(pos, board)):
                 pygame.time.delay(20)
@@ -209,7 +202,10 @@ def sudokuVerifier(board):
                 pygame.draw.rect(game_display, (255, 0, 0), [dif * x, dif * y, dif, dif], 2)
                 return
     return True
-
+def delete(x, y, board):
+    pygame.draw.rect(game_display, (194,194,214), [x, y, dif, dif], 0)
+    pygame.draw.rect(game_display, (51, 153, 255), [x, y, dif, dif], 2)
+    board[x // dif][y // dif] = 0
 
 
 
@@ -219,7 +215,7 @@ def sudokuVerifier(board):
 
 #<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #START OF MAIN FUNCTION
-drawSudoku(board2)
+drawSudoku(board)
 while True:
     #Constantly checking for mouse movement to indicate where it's highlighting over
     pos = pygame.mouse.get_pos()
